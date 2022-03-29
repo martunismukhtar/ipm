@@ -19,4 +19,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('user', 'App\Http\Controllers\UserController@index');
+Route::get('daftar-pekerjaan', 'App\Http\Controllers\ProfileController@listPekerjaan');
+Route::get('daftar-tahun-lahir', 'App\Http\Controllers\ProfileController@listTahunLahir');
+Route::get('daftar-bulan-lahir', 'App\Http\Controllers\ProfileController@listBulanLahir');
+
 Route::get('profile', 'App\Http\Controllers\ProfileController@index');
+
+Route::get('profile/{pekerjaan}/{tahun}/{bulan}', 'App\Http\Controllers\ProfileController@show');
+    // ->where(['pekerjaan'=>'[aA-zZ]+', 'tahun'=>'[0-9]+', 'bulan'=>'[0-9]+']);
+Route::post('profile', 'App\Http\Controllers\ProfileController@store');
+Route::put('profile/{id}', 'App\Http\Controllers\ProfileController@update')
+    ->where('id', '[0-9]+');
+Route::delete('profile/{id}', 'App\Http\Controllers\ProfileController@destroy')
+    ->where('id', '[0-9]+');
