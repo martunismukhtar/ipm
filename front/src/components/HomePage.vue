@@ -1,10 +1,9 @@
 <template>
 	<div>
-		<!-- <button type="button" class="btn btn-primary" @click="addProfile">Tambah Data</button> -->
 		
 		<form class="row g-3">
 			<div class="col-auto">
-				<input type="password" class="form-control" placeholder="Cari">
+				<input type="text" class="form-control" placeholder="Cari">
 			</div>
 			<div class="col-auto">
 				<select class="form-select" v-model="cari.pekerjaan" @change="cariData()">
