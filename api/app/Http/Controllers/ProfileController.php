@@ -73,9 +73,11 @@ class ProfileController extends Controller
             \DB::raw("to_char(tanggal_lahir, 'dd-mm-YYYY') as tanggal_lahir"),
             \DB::raw("tanggal_lahir as ori_tanggal_lahir"),
             \DB::raw("case when MOD(extract(
-                day from tanggal_lahir)::integer,2)=0 then 'Ganjil'
-				else 'Genap' end as jenis"),
-            \DB::raw("DATE_PART('week',tanggal_lahir) as week"))->where(function ($query) use ($filter){
+                day from tanggal_lahir)::integer,2)=0 then 'Genap'
+				else 'Ganjil' end as jenis"),
+            \DB::raw("case when MOD(	
+                DATE_PART('week',tanggal_lahir)::integer,2)=0 then 'Genap'
+                else 'Ganjil' end as week"))->where(function ($query) use ($filter){
             if(!empty($filter['pekerjaan']) && $filter['pekerjaan']!=0) {
                 $query->orWhere('pekerjaan',$filter['pekerjaan']);
             }
