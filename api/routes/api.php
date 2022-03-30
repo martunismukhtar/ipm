@@ -23,8 +23,8 @@ Route::get('daftar-pekerjaan', 'App\Http\Controllers\ProfileController@listPeker
 Route::get('daftar-tahun-lahir', 'App\Http\Controllers\ProfileController@listTahunLahir');
 Route::get('daftar-bulan-lahir', 'App\Http\Controllers\ProfileController@listBulanLahir');
 
-Route::get('profile', 'App\Http\Controllers\ProfileController@index');
-
+Route::post('filter', 'App\Http\Controllers\ProfileController@filter');
+Route::post('checkout', 'App\Http\Controllers\ProfileController@checkout');
 Route::get('profile/{pekerjaan}/{tahun}/{bulan}', 'App\Http\Controllers\ProfileController@show');
     // ->where(['pekerjaan'=>'[aA-zZ]+', 'tahun'=>'[0-9]+', 'bulan'=>'[0-9]+']);
 Route::post('profile', 'App\Http\Controllers\ProfileController@store');

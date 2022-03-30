@@ -6,6 +6,7 @@ import createPersistedState from "vuex-persistedstate";
 export default createStore({
 	state: {
 		qty:[],
+		produk:['baju', 'celana'],
 		product:[],
 		price:[],
 		description:[],
@@ -13,27 +14,35 @@ export default createStore({
 		buyerName:'',
 		buyerEmail:'',
 		buyerPhone:'',
-		// products:{
-		// 	product:[],
-		// product:[],
-		// price:[],
-		// description:[],
-		// }
+		barang:[],
+		filter:{
+			pekerjaan:'',
+			tahun:'',
+			bulan:'',
+			cari:''
+		}
 	},
 	getters: {
 		
 	},
 	mutations: {
 		addToChart(state, payload) {
-			//fruits.push("Kiwi");
-			state.product.push(payload['product'])
-			state.qty.push(payload['qty'])
-			state.price.push(payload['price'])
-			state.description.push(payload['description'])
+			state.barang.push({
+				qty:payload.qty,
+				product:payload.product,
+				price:payload.price,
+				description:payload.description
+			})
+		},
+		setFilter(state, payload){
+			state.filter.pekerjaan = payload.pekerjaan;
+			state.filter.tahun = payload.tahun;
+			state.filter.bulan = payload.bulan;
+			state.filter.cari = payload.cari;
+		},
+		resetChart (state){
+			state.barang=[];
 		}
-		// increment (state, payload=null){
-		// 	return state.count = state.count + (payload ? payload:1);
-		// }
 	},
 	actions: {
 		filter(context, data){
