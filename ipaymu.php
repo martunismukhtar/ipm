@@ -5,7 +5,7 @@
 $va           = '0000005260142060'; //get on iPaymu dashboard
 $secret       = 'SANDBOXC4CC5262-3437-4A57-B6BC-063568084C49-20220328152500'; //get on iPaymu dashboard
 
-$url          = 'https://my.ipaymu.com/api/v2/payment'; //url
+$url          = 'https://sandbox.ipaymu.com/api/v2/payment'; //url
 $method       = 'POST'; //method
 
 //Request Body//
@@ -56,9 +56,10 @@ if($err) {
     //Response
     $ret = json_decode($ret);
     if($ret->Status == 200) {
-        $sessionId  = $ret->Data->SessionID;
-        $url        =  $ret->Data->Url;
-        header('Location:' . $url);
+        print_r($ret);
+        // $sessionId  = $ret->Data->SessionID;
+        // $url        =  $ret->Data->Url;
+        // header('Location:' . $url);
     } else {
         print_r($ret);
     }

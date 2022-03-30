@@ -7,6 +7,8 @@
 					<th scope="col">Nama</th>
 					<th scope="col">Pekerjaan</th>
 					<th scope="col">Tanggal Lahir</th>
+					<th scope="col">Jenis Tanggal</th>
+					<th scope="col">Jenis Minggu</th>
 					<th scope="col">Action</th>
 				</tr>
 			</thead>
@@ -16,6 +18,8 @@
                     <td>{{column.nama}}</td>
                     <td>{{column.pekerjaan}}</td>
 					<td>{{column.tanggal_lahir}}</td>
+					<td>{{column.jenis}}</td>
+					<td>{{column.week}}</td>
 					<td>
 						<button type="button" class="btn btn-sm btn-danger m-1" @click="hapus(column.id)">Hapus</button>
 						<button type="button" class="btn btn-sm btn-warning" @click="update(column.id)">Update</button>

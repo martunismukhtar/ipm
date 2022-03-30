@@ -68,7 +68,14 @@ class ProfileController extends Controller
             'tahun'=>$tahun,
             'bulan'=>$bulan
         ];
-        $profile = Profile::where(function ($query) use ($filter){
+        $profile = Profile::select('id', 'nama', 'pekerjaan', 
+            // 'tanggal_lahir', 
+            \DB::raw("to_char(tanggal_lahir, 'dd-mm-YYYY') as tanggal_lahir"),
+            \DB::raw("tanggal_lahir as ori_tanggal_lahir"),
+            \DB::raw("case when MOD(extract(
+                day from tanggal_lahir)::integer,2)=0 then 'Ganjil'
+				else 'Genap' end as jenis"),
+            \DB::raw("DATE_PART('week',tanggal_lahir) as week"))->where(function ($query) use ($filter){
             if(!empty($filter['pekerjaan']) && $filter['pekerjaan']!=0) {
                 $query->orWhere('pekerjaan',$filter['pekerjaan']);
             }
@@ -85,6 +92,7 @@ class ProfileController extends Controller
         })
         ->orderBy('id', 'DESC')
         ->paginate(10);
+        // ->toSql();
         
         return response()->json([
             'status'=>'success', 
@@ -93,67 +101,71 @@ class ProfileController extends Controller
     }
     public function checkout(Request $request) {
         $va           = '0000005260142060'; //get on iPaymu dashboard
-    $secret       = 'SANDBOXC4CC5262-3437-4A57-B6BC-063568084C49-20220328152500'; //get on iPaymu dashboard
+        $secret       = 'SANDBOXC4CC5262-3437-4A57-B6BC-063568084C49-20220328152500'; //get on iPaymu dashboard
+        $url          = 'https://sandbox.ipaymu.com/api/v2/payment'; //url
+        $method       = 'POST'; //method
 
-$url          = 'https://my.ipaymu.com/api/v2/payment'; //url
-$method       = 'POST'; //method
-
-//Request Body//
-$body['product']    = array('headset', 'softcase');
-$body['qty']        = array('1', '3');
-$body['price']      = array('100000', '20000');
-$body['returnUrl']  = 'https://mywebsite.com/thankyou';
-$body['cancelUrl']  = 'https://mywebsite.com/cancel';
-$body['notifyUrl']  = 'https://mywebsite.com/notify';
-//End Request Body//
-
-//Generate Signature
-// *Don't change this
-$jsonBody     = json_encode($body, JSON_UNESCAPED_SLASHES);
-$requestBody  = strtolower(hash('sha256', $jsonBody));
-$stringToSign = strtoupper($method) . ':' . $va . ':' . $requestBody . ':' . $secret;
-$signature    = hash_hmac('sha256', $stringToSign, $secret);
-$timestamp    = Date('YmdHis');
-//End Generate Signature
-
-
-$ch = curl_init($url);
-
-$headers = array(
-    'Accept: application/json',
-    'Content-Type: application/json',
-    'va: ' . $va,
-    'signature: ' . $signature,
-    'timestamp: ' . $timestamp
-);
-
-curl_setopt($ch, CURLOPT_HEADER, false);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-curl_setopt($ch, CURLOPT_POST, count($body));
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonBody);
-
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-$err = curl_error($ch);
-$ret = curl_exec($ch);
-curl_close($ch);
-if($err) {
-    echo $err;
-} else {
-
-    //Response
-    $ret = json_decode($ret);
-    if($ret->Status == 200) {
-        $sessionId  = $ret->Data->SessionID;
-        $url        =  $ret->Data->Url;
-        header('Location:' . $url);
-    } else {
-        print_r($ret);
-    }
-    //End Response
-}
+        //Request Body//
+        // return response()->json([
+        //     'status'=>'success', 
+        //     'data'=>$request['qty']
+        // ]);
+        $body['product']    = $request['product'];//array('headset', 'softcase');
+        $body['qty']        = $request['qty'];//array('1', '3');
+        $body['price']      = $request['price'];//array('100000', '20000');
+        $body['returnUrl']  = 'https://mywebsite.com/thankyou';
+        $body['cancelUrl']  = 'https://mywebsite.com/cancel';
+        $body['notifyUrl']  = 'https://mywebsite.com/notify';
+        //End Request Body//
+        //Generate Signature
+        // *Don't change this
+        $jsonBody     = json_encode($body, JSON_UNESCAPED_SLASHES);
+        $requestBody  = strtolower(hash('sha256', $jsonBody));
+        $stringToSign = strtoupper($method) . ':' . $va . ':' . $requestBody . ':' . $secret;
+        $signature    = hash_hmac('sha256', $stringToSign, $secret);
+        $timestamp    = Date('YmdHis');
+        //End Generate Signature
+        $ch = curl_init($url);
+        $headers = array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'va: ' . $va,
+            'signature: ' . $signature,
+            'timestamp: ' . $timestamp
+        );
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, count($body));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonBody);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $err = curl_error($ch);
+        $ret = curl_exec($ch);
+        curl_close($ch);
+        if($err) {
+            echo $err;
+        } else {
+            //Response
+            $ret = json_decode($ret);
+            
+            if($ret->Status == 200) {
+                return response()->json([
+                    'status'=>'success', 
+                    'data'=>[
+                        'session_id'=>$ret->Data->SessionID,
+                        'redirect'=>$ret->Data->Url
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'status'=>'error', 
+                    'data'=>$ret->Message
+                ]);
+            }
+            
+        //End Response
+        }
     }
     public function store(Request $request) {
         $validation = Validator::make($request->all(),[

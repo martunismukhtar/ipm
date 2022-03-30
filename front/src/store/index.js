@@ -1,19 +1,14 @@
 import { createStore } from 'vuex';
 import createPersistedState from "vuex-persistedstate";
-// import config from '../../config';
-
 
 export default createStore({
 	state: {
-		qty:[],
-		produk:['baju', 'celana'],
-		product:[],
-		price:[],
-		description:[],
+		api:'http://127.0.0.1:8000/api/',
 		paymentMethod:'bniva',
 		buyerName:'',
 		buyerEmail:'',
 		buyerPhone:'',
+		weight:'', dimension:'',
 		barang:[],
 		filter:{
 			pekerjaan:'',
@@ -22,10 +17,18 @@ export default createStore({
 			cari:''
 		}
 	},
-	getters: {
-		
-	},
+	
 	mutations: {
+		setDim(state, payload){
+			state.weight = payload.weight;
+			state.dimension = payload.dimension;
+		},
+		setAlamatTagihan(state, payload) {
+			state.buyerName = payload.nama;
+			state.buyerEmail = payload.email;
+			state.buyerPhone = payload.telepon;
+			// state.buyerPhone = payload.telepon;
+		},
 		addToChart(state, payload) {
 			state.barang.push({
 				qty:payload.qty,
@@ -39,6 +42,10 @@ export default createStore({
 			state.filter.tahun = payload.tahun;
 			state.filter.bulan = payload.bulan;
 			state.filter.cari = payload.cari;
+		},
+		resetDim(state){
+			state.weight = '';
+			state.dimension = '';
 		},
 		resetChart (state){
 			state.barang=[];

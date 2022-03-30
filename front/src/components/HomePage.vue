@@ -72,36 +72,11 @@ export default {
 		}
 	},
 	methods:{
-		cariData(){
-			// this.params = '/'+this.cari.pekerjaan+'/'+this.cari.bulan+
-			// 		'/'+this.cari.tahun;
-			// this.url += this.params;
-			// this.get();
-
-		
-			// let params ={};
-			// if(this.cari.pekerjaan || this.cari.bulan || this.cari.tahun) {
-				// url += '/'+this.cari.pekerjaan+'/'+this.cari.bulan+
-				// 	'/'+this.cari.tahun;
-				// console.log(this.cari.bulan)
-				// this.url = 'http://127.0.0.1:8000/api/profile/'+this.cari.pekerjaan+'/'+this.cari.tahun+'/'+this.cari.bulan;	
-			// 	// params : {''};
-			// } 
-			// console.log(url)
-
-			// const profile = await axios.post(url, { headers: "" });	
-			// this.data_profile = profile.data.data.data;
-			// this.links = profile.data.data.links;	
-			// this.curr_page = profile.data.data.current_page
-			// // console.log(profile.data.data)
-			// this.params = '';
-		
-		},
 		hapus(id) {
 			this.selectedID = id;
 			let isExecuted = confirm("Apakah anda akan menghapus data ini ?");
 			if(isExecuted) {
-				axios.delete(this.url+'/'+id,{ headers: "" }).then(() => {
+				axios.delete(this.$store.state.api+'profile/'+id,{ headers: "" }).then(() => {
 					this.get();
 					this.isModalVisible = false;
 				}).catch((err) => console.log(err));
@@ -121,7 +96,7 @@ export default {
 		},
 		simpanData() {
 			const {nama, pekerjaan, tanggal_lahir, selectedID} = this;
-			let url = this.url_api+'profile';
+			let url = this.$store.state.api+'profile';
 			if(selectedID) {
 				axios.put(url+'/'+selectedID, {
 					nama,
@@ -175,19 +150,19 @@ export default {
 			}, { headers: "" });	
 			this.data_profile = profile.data.data.data;
 			this.links = profile.data.data.links;	
-			this.curr_page = profile.data.data.current_page
+			this.curr_page = profile.data.data.current_page;
 			
 		},
 		async getDaftarPekerjaan(){
-			const pekerjaan = await axios.get("http://127.0.0.1:8000/api/daftar-pekerjaan", { headers: "" });
+			const pekerjaan = await axios.get(this.$store.state.api+"daftar-pekerjaan", { headers: "" });
 			this.daftar_pekerjaan = pekerjaan.data.data;
 		},
 		async getDaftarTahun(){
-			const tahun = await axios.get("http://127.0.0.1:8000/api/daftar-tahun-lahir", { headers: "" });
+			const tahun = await axios.get(this.$store.state.api+"daftar-tahun-lahir", { headers: "" });
 			this.daftar_tahun = tahun.data.data;
 		},
 		async getDaftarBulan(){
-			const bulan = await axios.get("http://127.0.0.1:8000/api/daftar-bulan-lahir", { headers: "" });
+			const bulan = await axios.get(this.$store.state.api+"daftar-bulan-lahir", { headers: "" });
 			this.daftar_bulan = bulan.data.data;
 		}
 	},

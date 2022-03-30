@@ -4,7 +4,7 @@
             <div class="col-md-5 col-lg-4 order-md-last">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">Your cart</span>
-                    <span class="badge bg-primary rounded-pill">{{this.$store.state.qty.length}}</span>
+                    <span class="badge bg-primary rounded-pill">{{this.$store.state.barang.length}}</span>
                 </h4>
                 <ul class="list-group mb-3">
 
@@ -26,44 +26,32 @@
                 <h4 class="mb-3">Alamat Tagihan</h4>
                 <form class="needs-validation" @submit.prevent="bayar">
                     <div class="row g-3">
-                        <div class="col-sm-6">
-                            <label for="firstName" class="form-label">Nama Pembeli</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
-                            <div class="invalid-feedback">
-                                Valid first name is required.
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="lastName" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-                            <div class="invalid-feedback">
-                                Valid last name is required.
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="email" class="form-label">Nomor Telepon <span class="text-muted">(Optional)</span></label>
-                            <input type="email" class="form-control" id="email" placeholder="you@example.com">
-                            <div class="invalid-feedback">
-                                Please enter a valid email address for shipping updates.
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="email" class="form-label">Kode Pos <span class="text-muted">(Optional)</span></label>
-                            <input type="email" class="form-control" id="email" placeholder="you@example.com">
-                            <div class="invalid-feedback">
-                                Please enter a valid email address for shipping updates.
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <label for="address" class="form-label">Alamat</label>
-                            <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
-                            <div class="invalid-feedback">
-                                Please enter your shipping address.
-                            </div>
-                        </div>
+                    <div class="col-sm-6">
+                        <label for="firstName" class="form-label">Nama Pembeli</label>
+                        <input type="text" class="form-control" v-model="nama"/>    
                     </div>
-                    <hr class="my-4">
+                    <div class="col-sm-6">
+                        <label for="lastName" class="form-label">Email</label>
+                            <input type="email" class="form-control" v-model="email"/>
+                    </div>
+                    <div class="col-sm-6">
+                            <label class="form-label">Nomor Telepon</label>
+                            <input type="tel" class="form-control" v-model="nomor_telepon">
+                            
+                        </div>
+                     <div class="col-sm-6">
+                            <label class="form-label">Kode Pos</label>
+                            <input type="text" class="form-control" v-model="kode_pos">
+                            
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="form-label">Alamat</label>
+                            <input type="text" class="form-control" v-model="alamat">
+                            
+                        </div>
+                       <hr class="my-4">
                     <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+                        </div>
                 </form>
             </div>
         </div>
@@ -71,12 +59,16 @@
 </template>
 
 <script>
-
+import axios from 'axios';
 export default {
 	name: "CheckoutPage",
 	data(){
 		return {
-			qty:1
+			nama:'',
+            email:'',
+            telepon:'',
+            kode_pos:'',
+            alamat:''
 		}
 	},
     mounted() {
@@ -84,14 +76,37 @@ export default {
     },
     methods: {
         bayar(){
-            console.log(this.$store.state.qty)
-            this.$store.commit('resetChart');
+            const barang = this.$store.state.barang;
+            const {nama, email, telepon, kode_pos, alamat} = this;
+            const {weight, dimension} = this.$store.state;
+            let qty=[], product=[], price=[];
+            
+            for(let j=0;j<barang.length;j++) {
+                qty.push(barang[j].qty);
+                product.push(barang[j].product);
+                price.push(barang[j].price);
+            }
+
+            let url = this.$store.state.api+'checkout'
+            axios.post(url, {
+					qty, product, price,
+                    nama, email, telepon, kode_pos, alamat,
+                    weight, dimension
+				},{ headers: "" }).then((res) => {
+                    if(res.status===200) {
+                        window.location.href = res.data.data.redirect;
+                    } else {
+                        alert(res.data)
+                    }
+                    this.$store.commit('resetChart');
+                    this.$store.commit('resetDim');
+				}).catch((err) => console.log(err));
+            
         }
     },
     computed: {
         total:function(){
             let t=0;
-
             for(let i=0;i<this.$store.state.barang.length;i++) {
                 t=t+this.$store.state.barang[i].qty*this.$store.state.barang[i].price;
             }

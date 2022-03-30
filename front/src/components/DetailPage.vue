@@ -1,9 +1,9 @@
 <template>
-	<div class="container pb-5">
+	<div class="container">
         <div class="row">
             <SlidePage />
             
-            <div class="col-lg-7 mt-5">
+            <div class="col-lg-7 mt-2">
                 <div class="card">
                     <div class="card-body">
                         <h1 class="h2">Active Wear</h1>
@@ -35,7 +35,8 @@
                             </li>
                         </ul>
                         <h6>Specification:</h6>
-                            <ul class="list-unstyled pb-3">
+                        <br>
+                            <!-- <ul class="list-unstyled pb-3">
                                 <li>Lorem ipsum dolor sit</li>
                                 <li>Amet, consectetur</li>
                                 <li>Adipiscing elit,set</li>
@@ -43,57 +44,59 @@
                                 <li>Ut enim ad minim</li>
                                 <li>Dolore magna aliqua</li>
                                 <li>Excepteur sint</li>
-                            </ul>
-                            <form @submit.prevent="checkout">
-                                <div class="row g-3">
-                                    <div class="mb-3 row">
-										<label class="col-sm-2 col-form-label">Weight</label>
-										<div class="col-sm-2">
-											<input type="number" class="form-control" v-model="weight">&nbsp;Kg
-										</div>
+                            </ul> -->
+                        <form @submit.prevent="checkout">
+                            <div class="row g-3">
+                                <div class="row mb-3">
+                                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Weight</label>
+                                    <div class="col-sm-4">
+                                        <input type="number" class="form-control form-control-sm" 
+                                          v-model="weight"  >
                                     </div>
-                                    <div class="mb-3 row">
-                                        <label class="col-sm-2 col-form-label">Dimension</label>
-                                        <div class="col-sm-2">
-                                            <input type="number" class="form-control" v-model="dimension">&nbsp;PxLxT
-                                        </div>
+                                    <div class="col-sm-1">
+                                        <span>kg</span>
                                     </div>
-                                    <div class="col-auto">
-                                        <ul class="list-inline pb-3">
-                                            <li class="list-inline-item text-right">
-                                                Quantity
-                                                <input type="hidden" name="product-quanity" v-model="qty">
-                                            </li>
-                                            <li class="list-inline-item">
-												<span class="btn btn-success" id="btn-minus"
-												@click="(e)=> {
-													if(this.qty>=1) {
-														this.qty -=1
-													}
-													
-													}">-</span></li>
-                                            <li class="list-inline-item"><span class="badge bg-secondary" id="var-value">{{qty}}</span></li>
-                                            <li class="list-inline-item"><span class="btn btn-success" id="btn-plus" 
+                                </div>
+                            <div class="row mb-3">
+                                <label for="colFormLabel" class="col-sm-2 col-form-label">Dimension</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control"
+                                        v-model="dimension">
+                                </div>
+                                <div class="col-sm-6">
+                                        <span>length: width: height</span>
+                                    </div>
+                            </div>
+                            <div class="col-auto">
+                                <ul class="list-inline pb-3">
+                                    <li class="list-inline-item text-right">
+                                        Quantity
+                                        <input type="hidden" name="product-quanity" v-model="qty">
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <span class="btn btn-outline-secondary" id="btn-minus"
+											@click="(e)=> {
+												if(this.qty>=1) {
+													this.qty -=1
+												}
+											}">-</span></li>
+                                    <li class="list-inline-item"><span class="badge bg-secondary" id="var-value">{{qty}}</span></li>
+                                    <li class="list-inline-item"><span class="btn btn-outline-secondary" id="btn-plus" 
 												@click="(e)=>this.qty +=1">+</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="row pb-3">
-                                    <!-- <div class="col d-grid">
-                                        <button type="submit" class="btn btn-success btn-lg" name="submit" value="buy">Buy</button>
-                                    </div> -->
-                                    <div class="col d-grid">
-                                        <button type="submit" class="btn btn-success btn-lg" name="submit" value="addtocard">Add To Cart</button>
-                                    </div>
-                                </div>
-                            </form>
-
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                        <div class="row pb-3">
+                            <div class="col d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" name="submit" value="addtocard">Add To Cart</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-	
+    </div>
+    </div>
 </template>
 
 <script>
@@ -118,7 +121,11 @@ export default {
                 product:'baju',
                 price:10000,
                 description:'--'
-            });            
+            });        
+            this.$store.commit('setDim', {
+                weight:this.weight,
+                dimension:this.dimension
+            })    
             this.$router.push('/checkout') 
         }
     },

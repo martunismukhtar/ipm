@@ -38,9 +38,7 @@
         <div class="col-auto">
             <button type="button" class="btn btn-primary mb-3" @click="filterData">Filter</button>
         </div>
-        <!-- <div class="col-auto float-end">
-            <button type="button" class="btn btn-primary mb-3 float-end" @click="addProfile">Tambah Data</button>
-        </div> -->
+       
     </div>
 	</div>
 </template>
