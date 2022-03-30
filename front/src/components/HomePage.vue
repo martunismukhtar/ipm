@@ -88,7 +88,7 @@ export default {
 				if(this.data_profile[i].id==id) {
 					this.nama = this.data_profile[i].nama;
 					this.pekerjaan = this.data_profile[i].pekerjaan;
-					this.tanggal_lahir = this.data_profile[i].tanggal_lahir;
+					this.tanggal_lahir = this.data_profile[i].ori_tanggal_lahir;
 					
 				}
 			}
